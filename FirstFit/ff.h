@@ -10,9 +10,32 @@ struct free_list {
 };
 
 // free_list operators
-void list_init(struct free_list *list);  // initialize
-void list_insert(struct free_list *node, struct free_list *list); // insert node as list's next
-void list_unlink(struct free_list *node); // remove node
+void list_init(struct free_list *list)  // initialize
+{
+  list->prev = list->next = list;
+}
+void list_insert(struct free_list *node, struct free_list *list) // insert node as list's next
+{
+  free_list *next = list->next;
+  list->next = next->prev = node;
+  node->next = next;
+  node->prev = prev;
+}
+void list_unlink(struct free_list *node)
+{
+  if (node->prev == node->next)
+  {
+    //only one, how to delete?
+  }else
+  {
+    free_list *next = list->next;
+    free_list *prev = list->prev;
+    prev->next = next;
+    next->prev = prev;
+    //free_a_block
+    //ff_free()?
+  }
+} // remove node
 
 // first fit
 size_t ff_alloc(size_t bytes); // alloc a block whose size >= bytes
