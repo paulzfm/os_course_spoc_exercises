@@ -13,32 +13,9 @@ struct free_list {
 };
 
 // free_list operators
-void list_init(struct free_list *list)  // initialize
-{
-    list->prev = list->next = list;
-    list->size = MAX_MEM;
-}
-
-void list_insert(struct free_list *node, struct free_list *list) // insert node as list's next
-{
-    struct free_list *next = list->next;
-    struct free_list *prev = list->prev;
-    list->next = next->prev = node;
-    node->next = next;
-    node->prev = prev;
-}
-
-void list_unlink(struct free_list *node)
-{
-  if (node->prev == node->next) { // no more free space
-      node->size = 0;
-  } else {
-      struct free_list *next = node->next;
-      struct free_list *prev = node->prev;
-      prev->next = next;
-      next->prev = prev;
-  }
-} // remove node
+void list_init(struct free_list *list);  // initialize
+void list_insert(struct free_list *node, struct free_list *list); // insert node as list's next
+void list_unlink(struct free_list *node); // remove node
 
 // first fit
 // alloc a block whose size >= bytes, returns the bytes allocated
@@ -47,6 +24,6 @@ size_t ff_alloc(struct free_list *list, size_t bytes, void **start);
 void ff_free(struct free_list *list, void *start, size_t bytes);
 
 // tests
-void ff_test();
+void ff_test(struct free_list *list);
 
 #endif
