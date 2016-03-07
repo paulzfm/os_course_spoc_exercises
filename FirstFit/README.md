@@ -10,18 +10,15 @@
 (769 bytes, @255)
 (513 bytes, @511)
 (1 bytes, @1023)
-(1 bytes, @1023) (1 bytes, @0)
-(1 bytes, @1023) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (32 bytes, @31) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (64 bytes, @63) (32 bytes, @31) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (128 bytes, @127) (64 bytes, @63) (32 bytes, @31) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (256 bytes, @255) (128 bytes, @127) (64 bytes, @63) (32 bytes, @31) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
-(1 bytes, @1023) (512 bytes, @511) (256 bytes, @255) (128 bytes, @127) (64 bytes, @63) (32 bytes, @31) (16 bytes, @15) (8 bytes, @7) (4 bytes, @3) (2 bytes, @1) (1 bytes, @0)
+(1 bytes, @0) (1 bytes, @1023)
+(3 bytes, @0) (1 bytes, @1023)
+(7 bytes, @0) (1 bytes, @1023)
+(15 bytes, @0) (1 bytes, @1023)
+(31 bytes, @0) (1 bytes, @1023)
+(63 bytes, @0) (1 bytes, @1023)
+(127 bytes, @0) (1 bytes, @1023)
+(255 bytes, @0) (1 bytes, @1023)
+(511 bytes, @0) (1 bytes, @1023)
+Segmentation fault: 11
 
-
-首先第一位是该块剩余的字节数。第二个数字意思是用掉了多少
-PS:但是这个输出为什么是好几块好几块的？是我对算法理解错了还是对输出理解错了？
-我大概的做法就是做了一个循环，把2的次方依次放进去
+现在这个样例最后有个segmentation fault是什么情况？目测我哪里没处理好
