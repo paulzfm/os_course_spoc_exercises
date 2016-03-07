@@ -12,7 +12,7 @@ void list_insert(struct free_list *node, struct free_list *list) // insert node 
     struct free_list *prev = list->prev;
     list->next = next->prev = node;
     node->next = next;
-    node->prev = prev;
+    node->prev = list;
 }
 
 void list_unlink(struct free_list *node) // remove node
