@@ -1,4 +1,5 @@
-将main.c注释掉之后使用tests.c得到了如下的结果：
+运行结果：
+
 (1024 bytes, @0)
 (1023 bytes, @1)
 (1021 bytes, @3)
@@ -19,6 +20,4 @@
 (127 bytes, @0) (1 bytes, @1023)
 (255 bytes, @0) (1 bytes, @1023)
 (511 bytes, @0) (1 bytes, @1023)
-Segmentation fault: 11
-
-现在这个样例最后有个segmentation fault是什么情况？目测我哪里没处理好
+(1024 bytes, @0)
