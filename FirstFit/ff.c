@@ -33,7 +33,8 @@ void ff_free(struct free_list *list, char *start, size_t bytes)
 
     struct free_list *node;
     for (node = list->next; node != list; node = node->next) { // traverse free list
-        if (node->index > new_node->index) { // insert after node
+        if (node->index > new_node->index) { // insert before node
+            node = node->prev;
             list_insert(new_node, node);
             if (new_node->next->index == new_node->index + bytes) { // merge next
                 new_node->size += new_node->next->size;
