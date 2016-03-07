@@ -22,7 +22,7 @@ void list_unlink(struct free_list *node);
 
 // first fit
 // alloc a block whose size >= bytes, returns the bytes allocated
-size_t ff_alloc(struct free_list *list, size_t bytes);
+size_t ff_alloc(struct free_list *list, size_t bytes, void **start);
 // free memory start ~ start + size, returns the bytes free
 size_t ff_free(struct free_list *list, void *start, size_t bytes);
 
