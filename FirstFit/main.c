@@ -1,7 +1,7 @@
 #include "ff.h"
 #include <stdio.h>
 
-int main()
+/*int main()
 {
     struct free_list *list = malloc(sizeof(struct free_list));
     struct free_list *node = malloc(sizeof(struct free_list));
@@ -23,4 +23,4 @@ int main()
     ff_print(list);
 
     return 0;
-}
+}*/
