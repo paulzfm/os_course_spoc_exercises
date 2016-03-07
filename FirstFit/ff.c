@@ -1,7 +1,7 @@
 #include "ff.h"
 #include <stdio.h>
 
-static char mem[MAX_MEM];
+char mem[MAX_MEM];
 
 size_t ff_alloc(struct free_list *list, size_t bytes, char **start)
 {
@@ -14,7 +14,7 @@ size_t ff_alloc(struct free_list *list, size_t bytes, char **start)
                 node->index += bytes;
             } else {
                 list_unlink(node);
-                free(node);
+                // free(node);
             }
             return bytes;
         }
@@ -28,6 +28,7 @@ void ff_free(struct free_list *list, char *start, size_t bytes)
 {
     // construct new node
     struct free_list *new_node = malloc(sizeof(struct free_list));
+    new_node->prev = new_node->next = NULL;
     new_node->size = bytes;
     new_node->index = start - mem;
 
@@ -39,12 +40,12 @@ void ff_free(struct free_list *list, char *start, size_t bytes)
             if (new_node->next->index == new_node->index + bytes) { // merge next
                 new_node->size += new_node->next->size;
                 list_unlink(new_node->next);
-                free(new_node->next);
+                // free(new_node->next);
             }
-            if (new_node->prev->index == new_node->index - new_node->prev->size) { // merge prev
-                new_node->prev->size += new_node->size;
+            if (node->index + node->size == new_node->index) { // merge prev
+                node->size += new_node->size;
                 list_unlink(new_node);
-                free(new_node);
+                // free(new_node);
             }
             return;
         }

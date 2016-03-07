@@ -13,13 +13,17 @@ int main()
 
     // ff_test(list);
     char *buf1, *buf2, *buf3;
-    ff_alloc(list, 32, &buf1);
+    ff_alloc(list, 16, &buf1);
     ff_print(list);
-    ff_alloc(list, 992, &buf2);
+    ff_alloc(list, 16, &buf2);
     ff_print(list);
-    ff_free(list, buf1, 32);
+    ff_alloc(list, 16, &buf3);
     ff_print(list);
-    ff_alloc(list, 128, &buf3);
+    ff_free(list, buf2, 16);
+    ff_print(list);
+    ff_free(list, buf1, 16);
+    ff_print(list);
+    ff_free(list, buf3, 16);
     ff_print(list);
 
     return 0;
