@@ -1,20 +1,19 @@
 #include "ff.h"
+#include <stdio.h>
 
 static char mem[MAX_MEM];
 
-size_t ff_alloc(struct free_list *list, size_t bytes, void **start)
+size_t ff_alloc(struct free_list *list, size_t bytes, char **start)
 {
     struct free_list *node;
-    for (node = list; node != list; node = node->next) { // traverse free list
+    for (node = list->next; node != list; node = node->next) { // traverse free list
         if (node->size >= bytes) { // find!
             *start = mem + node->index;
-            struct free_list *here = node->prev;
-            list_unlink(node);
             if (node->size > bytes) { // split
                 node->size -= bytes;
                 node->index += bytes;
-                list_insert(node, here);
             } else {
+                list_unlink(node);
                 free(node);
             }
             return bytes;
@@ -25,15 +24,15 @@ size_t ff_alloc(struct free_list *list, size_t bytes, void **start)
     return 0;
 }
 
-void ff_free(struct free_list *list, void *start, size_t bytes)
+void ff_free(struct free_list *list, char *start, size_t bytes)
 {
     // construct new node
     struct free_list *new_node = malloc(sizeof(struct free_list));
     new_node->size = bytes;
-    new_node->index = (char*)start - mem;
+    new_node->index = start - mem;
 
     struct free_list *node;
-    for (node = list; node != list; node = node->next) { // traverse free list
+    for (node = list->next; node != list; node = node->next) { // traverse free list
         if (node->index > new_node->index) { // insert after node
             list_insert(new_node, node);
             if (new_node->next->index == new_node->index + bytes) { // merge next
@@ -49,4 +48,13 @@ void ff_free(struct free_list *list, void *start, size_t bytes)
             return;
         }
     }
+}
+
+void ff_print(struct free_list *list)
+{
+    struct free_list *node;
+    for (node = list->next; node != list; node = node->next) {
+        printf("(%zu bytes, @%d) ", node->size, node->index);
+    }
+    printf("\n");
 }

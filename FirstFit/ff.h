@@ -19,9 +19,12 @@ void list_unlink(struct free_list *node); // remove node
 
 // first fit
 // alloc a block whose size >= bytes, returns the bytes allocated
-size_t ff_alloc(struct free_list *list, size_t bytes, void **start);
+size_t ff_alloc(struct free_list *list, size_t bytes, char **start);
 // free memory start ~ start + size, returns the bytes free
-void ff_free(struct free_list *list, void *start, size_t bytes);
+void ff_free(struct free_list *list, char *start, size_t bytes);
+
+// debug
+void ff_print(struct free_list *list);
 
 // tests
 void ff_test(struct free_list *list);
