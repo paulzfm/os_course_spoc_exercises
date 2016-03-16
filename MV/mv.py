@@ -5,11 +5,12 @@ def get_data(vaddr, pdbr, mem, disk):
     pde_index = vaddr >> 10
     ped = mem[pdbr + pde_index]
     valid_bit = ped >> 7
-    pt = (ped & 0b01111111) << 5
-    print('  --> pde index:0x%x  pde contents:(valid %i, pfn 0x%x)' % (pde_index, valid_bit, ped & 0b01111111))
+    pfn = ped & 0b01111111
+    pt = pfn << 5
+    print('  --> pde index:0x%x  pde contents:(valid %i, pfn 0x%x)' % (pde_index, valid_bit, pfn))
 
     dev = mem if valid_bit == 1 else disk
-    if dev == disk and pt == 0x7F:
+    if dev == disk and pfn == 0x7F:
         print('    --> Data missing')
         return
 
