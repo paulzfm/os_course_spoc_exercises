@@ -37,34 +37,42 @@ do_sleep(unsigned int time) {
 
 ```
 
-其中timer设置了计时器，sleep对应的等待队列在current中，add_timer和del_timer是将计时器加入／退出队列，唤醒操作应该是在schedule中
-
-schedule函数在kern/shedule/sched.c中
+其中timer_init初始了计时器。
+add_timer设置了计时器，sleep对应的等待队列在timer_list中，
+然后是timer_list中有一个run_time_list函数
 
 ```
 void
-schedule(void) {
+run_timer_list(void) {
     bool intr_flag;
-    struct proc_struct *next;
     local_intr_save(intr_flag);
     {
-        current->need_resched = 0;
-        if (current->state == PROC_RUNNABLE) {
-            sched_class_enqueue(current);
+        list_entry_t *le = list_next(&timer_list);
+        if (le != &timer_list) {
+            timer_t *timer = le2timer(le, timer_link);
+            assert(timer->expires != 0);
+            timer->expires --;
+            while (timer->expires == 0) {
+                le = list_next(le);
+                struct proc_struct *proc = timer->proc;
+                if (proc->wait_state != 0) {
+                    assert(proc->wait_state & WT_INTERRUPTED);
+                }
+                else {
+                    warn("process %d's wait_state == 0.\n", proc->pid);
+                }
+                wakeup_proc(proc);
+                del_timer(timer);
+                if (le == &timer_list) {
+                    break;
+                }
+                timer = le2timer(le, timer_link);
+            }
         }
-        if ((next = sched_class_pick_next()) != NULL) {
-            sched_class_dequeue(next);
-        }
-        if (next == NULL) {
-            next = idleproc;
-        }
-        next->runs ++;
-        if (next != current) {
-            proc_run(next);
-        }
+        sched_class_proc_tick(current);
     }
     local_intr_restore(intr_flag);
 }
 ```
 
-这一段做的就是先将当前运行的进程加入队列中变为暂停，等待队列中找出来一个进程变为运行状态
+其中的wakeup_proc就是对进程的唤醒操作
