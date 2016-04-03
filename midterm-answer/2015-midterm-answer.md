@@ -63,6 +63,8 @@ WARNING: 仅供参考！
 
 (3) Belady现象：分配的物理页面数增加，缺页次数反而升高的异常现象。FIFO和Clock都存在。例子请参见[Lecture 9.4](http://166.111.68.197:11123/oscourse/OS2015autumn/lecture09?action=AttachFile&do=get&target=20151117-lecture-09-4.mp4)（即(2)中序列）。
 
+[Piazza](https://piazza.com/class/i5j09fnsl7k5x0?cid=762) 上刚好有个关于 Belady 现象的讨论。
+
 ### 第四题
 
 (1) 切换前的进程`prev`
