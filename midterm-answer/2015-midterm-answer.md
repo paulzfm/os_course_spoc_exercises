@@ -38,23 +38,23 @@ WARNING: 仅供参考！
 (2.1)
 
 ```c
-pde_index = (vaddr >> 9);
+int pde_index = (vaddr >> 9);
 ```
 
 (2.2)
 
 ```c
-pte_index = (vaddr >> 5) & 0xF;
+int pte_index = (vaddr >> 5) & 0xF;
 ```
 
 (2.3)
 
 ```c
-pde = page[pdbr + pde_index];
+int pde = page[pdbr + pde_index];
 if (pde >> 7 == 0) // throw page fault
-pte_start = (pde & 0x7F) >> 5;
-pte = page[pte_start + pte_index];
-paddr = (pte << 5) + (vaddr & 0x1F);
+int pte_start = (pde & 0x7F) >> 5;
+int pte = page[pte_start + pte_index];
+int paddr = (pte << 5) + (vaddr & 0x1F);
 ```
 
 (2.4)
@@ -66,4 +66,4 @@ Parent Process: Global variable: 21 Stack variable: 19
 Child Process:  Global variable: 22 Stack variable: 18
 ```
 
-程序见：
+程序见：[2015_6.c](https://github.com/paulzfm/os_course_spoc_exercises/blob/master/midterm-answer/2015_6.c)
