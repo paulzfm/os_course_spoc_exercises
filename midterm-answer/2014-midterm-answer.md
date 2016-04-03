@@ -91,8 +91,37 @@ int fork();
 
 功能：复制父进程的所有变量和内存、通用寄存器。子进程的返回0，父进程的返回子进程标识符。
 
-(2)
+(2) 为了解答此题，你需要先对[wait](http://linux.die.net/man/2/wait)的行为有所了解。
 
+源码参见[2014_4.c](https://github.com/paulzfm/os_course_spoc_exercises/blob/master/midterm-answer/2014_4.c)，里面有详细的注释说明程序的行为，特别注意`getppid()`与`getpid()`与原题相比反过来了，这样才能让输出的顺序对文字描述对应上。原题中，完整的输入如下：
+
+```
+xyong@portal:~/work$ ./a.out
+Here I am in the program! Time to wait = 5
+F S UID PID PPID C PRI NI ADDR SZ WCHAN TTY TIME CMD
+0 S 1000 11739 11738 0 80 0 - 6926 wait pts/0 00:00:00 bash
+0 S 1000 11862 11739 0 80 0 - 1041 wait pts/0 00:00:00 a.out
+0 S 1000 11863 11862 0 80 0 - 1101 wait pts/0 00:00:00 sh
+0 R 1000 11864 11863 0 80 0 - 2433 - pts/0 00:00:00 ps
+I'm the parent at Line 33. My parent's process ID is 11739, My process ID is 11862, status = 0.
+I'm the child. My parent's process ID is 11862, My process ID is 11865, status = 17.
+Bye now!
+Child 11865 exited with status 17.
+I'm the parent at Line 43. My parent's process ID is 11739, My process ID is 11862, status = 17.
+
+xyong@portal:~/work$ ./a.out 3
+Here I am in the program! Time to wait = 3
+F S UID PID PPID C PRI NI ADDR SZ WCHAN TTY TIME CMD
+0 S 1000 11739 11738 0 80 0 - 6926 wait pts/0 00:00:00 bash
+0 S 1000 11866 11739 0 80 0 - 1041 wait pts/0 00:00:00 a.out
+0 S 1000 11867 11866 0 80 0 - 1101 wait pts/0 00:00:00 sh
+0 R 1000 11868 11867 0 80 0 - 2433 - pts/0 00:00:00 ps
+I'm the parent at Line 33. My parent's process ID is 11739, My process ID is 11866, status = 0.
+I'm the child. My parent's process ID is 11866, My process ID is 11869, status = 17.
+Bye now!
+Child 11869 exited with status 17.
+I'm the parent at Line 43. My parent's process ID is 11739, My process ID is 11866, status = 17.
+```
 
 ### 第五题
 
