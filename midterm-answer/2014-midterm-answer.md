@@ -93,7 +93,7 @@ pid_t fork(void);
 
 (2) 为了解答此题，你需要先对[wait](http://linux.die.net/man/2/wait)的行为有所了解。
 
-源码参见[2014_4.c](https://github.com/paulzfm/os_course_spoc_exercises/blob/master/midterm-answer/2014_4.c)，里面有详细的注释说明程序的行为，特别注意`getppid()`与`getpid()`与原题相比反过来了，这样才能让输出的顺序对文字描述对应上。原题中，完整的输入如下：
+源码参见[2014_4.c](https://github.com/paulzfm/os_course_spoc_exercises/blob/master/midterm-answer/2014_4.c)，里面有详细的注释说明程序的行为，特别注意`getppid()`与`getpid()`与原题相比反过来了，这样才能让输出的顺序对文字描述对应上。原题中，完整的输出如下：
 
 ```
 xyong@portal:~/work$ ./a.out
