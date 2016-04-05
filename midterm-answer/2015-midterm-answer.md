@@ -67,13 +67,13 @@ WARNING: 仅供参考！
 
 ### 第四题
 
-(1) 切换前的进程`prev`
+(1) 切换前的进程`prev`（本题有二义性，至于`switch_to`的返回地址到底是什么意思，大家的理解可能不一样）
 
 (2) 在刚进入`switch_to`时，`prev`的上下文起始地址为`esp + 4`，`next`的上下文起始地址为`esp + 8`。
 
 (3) `lcr3(next->cr3);`
 
-(4) `load_esp0(next->kstack + KSTACKSIZE);`
+(4) `movl 4(%eax), %esp`
 
 ### 第五题
 
