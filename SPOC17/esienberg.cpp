@@ -16,6 +16,55 @@ int flags[1020];
 int now[1020];//当前i进程应该执行第多少条指令
 int n,m;
 int IIndex[1020];
+int finish[1020];
+int nowrun,nowstate;
+
+void runCheck(int pid,int state)
+{
+  if(state == 1)
+  {
+    //进入时，需要没有程序在运行
+    if(nowrun)
+    {
+      printf("ERROR\n");
+      exit(0);
+    }
+
+    nowrun = pid;
+    nowstate = 1;
+  }else if(state == 2)
+  {
+    if(nowrun!=pid)
+    {
+      printf("ERROR\n");
+      exit(0);
+    }
+    if(nowstate!=1)
+    {
+      printf("ERROR\n");
+      exit(0);
+    }
+    nowstate = 3;
+  }else if(state == 3)
+  {
+    if(nowrun!=pid)
+    {
+      printf("ERROR\n");
+      exit(0);
+    }
+    if(nowstate!=2)
+    {
+      printf("ERROR\n");
+      exit(0);
+    }
+    nowstate = 0;
+    nowrun = 0;
+  }else
+  {
+    printf("ERROR\n");
+    exit(0);
+  }
+}
 
 void runModify(int pid)
 {
@@ -63,15 +112,18 @@ void runModify(int pid)
       break;
     case 9:
       turn = pid;
-      printf("ENTER PROCESS %d\n",pid);
+      runCheck(pid,1);
+      //printf("ENTER PROCESS %d\n",pid);
       now[pid] = 10;
       break;
     case 10:
-      printf("RUNNING PROCESS %d\n",pid);
+      //printf("RUNNING PROCESS %d\n",pid);
+      runCheck(pid,2);
       now[pid]=11;
       break;
     case 11:
-      printf("EXIT PROCESS %d\n",pid);
+      //printf("EXIT PROCESS %d\n",pid);
+      runCheck(pid,3);
       IIndex[pid] = (turn+1)%n;
       now[pid]=12;
       break;
@@ -93,6 +145,7 @@ void runModify(int pid)
       break;
     case 16:
       now[pid]=16;
+      finish[pid]=1;
       break;
     default:
       printf("ERROR!\n");
@@ -101,25 +154,65 @@ void runModify(int pid)
   }
 }
 
+void init()
+{
+  memset(flags,0,sizeof(flags));
+  memset(finish,0,sizeof(finish));
+  memset(IIndex,0,sizeof(IIndex));
+  memset(now,0,sizeof(now));
+  turn = 0;
+  nowrun = 0;
+  nowstate = 0;
+}
+
+void load_(int *save_state)
+{
+  turn = save_state[0];
+  nowrun = save_state[1];
+  nowstate = save_state[2];
+  memcpy(flags+1,save_state+3,n*sizeof(int));
+  memcpy(now+1,save_state+3+n,n*sizeof(int));
+  memcpy(IIndex+1,save_state+3+n+n,n*sizeof(int));
+  memcpy(finish+1,save_state+3+n+n+n,n*sizeof(int));
+}
+
+void save_(int *save_state)
+{
+  save_state[0] = turn;
+  save_state[1] = nowrun;
+  save_state[2] = nowstate;
+  memcpy(save_state+3,flags+1,n*sizeof(int));
+  memcpy(save_state+3+n,now+1,n*sizeof(int));
+  memcpy(save_state+3+n+n,IIndex+1,n*sizeof(int));
+  memcpy(save_state+3+n+n+n,finish+1,n*sizeof(int));
+}
+
+void dfs()
+{
+  int *save_state = new int[4*n+3];
+  for(int i=1;i<=n;++i)
+  {
+    save_(save_state);
+    if(!finish[i])runModify(i);
+    load_(save_state);
+  }
+  delete save_state;
+}
+
 int main()
 {
-  freopen("input.txt","r",stdin);
-  freopen("output2.txt","w",stdout);
 
-  scanf("%d%d",&n,&m);
+  scanf("%d",&n);
 
-  for(int i=1;i<=m;++i)
-  {
-    int x;
-    scanf("%d",&x);
-    runModify(x);//执行x进程一条指令
-  }
+  init();
+  dfs();
 
 /*  for(int i=1;i<=m;++i)
   {
     for(int j=0;j<n;++j)
       runModify(j);
   }*/
+  printf("OK\n");
   return 0;
 
 }
