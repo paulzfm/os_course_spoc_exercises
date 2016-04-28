@@ -17,6 +17,8 @@ int now[1020];//当前i进程应该执行第多少条指令
 int n,m,deeplimit;
 int IIndex[1020];
 int finish[1020];
+int lastvisit;
+int nowdeep;
 int nowrun,nowstate;
 
 void runCheck(int pid,int state)
@@ -30,7 +32,7 @@ void runCheck(int pid,int state)
       printf("ERROR\n");
       exit(0);
     }
-
+    lastvisit = nowdeep;
     nowrun = pid;
     nowstate = 1;
   }else if(state == 2)
@@ -45,6 +47,7 @@ void runCheck(int pid,int state)
       printf("ERROR\n");
       exit(0);
     }
+
     nowstate = 2;
   }else if(state == 3)
   {
@@ -174,10 +177,12 @@ void load_(int *save_state)
   turn = save_state[0];
   nowrun = save_state[1];
   nowstate = save_state[2];
-  memcpy(flags+1,save_state+3,n*sizeof(int));
-  memcpy(now+1,save_state+3+n,n*sizeof(int));
-  memcpy(IIndex+1,save_state+3+n+n,n*sizeof(int));
-  memcpy(finish+1,save_state+3+n+n+n,n*sizeof(int));
+  lastvisit = save_state[3];
+  memcpy(flags+1,save_state+4,n*sizeof(int));
+  memcpy(now+1,save_state+4+n,n*sizeof(int));
+  memcpy(IIndex+1,save_state+4+n+n,n*sizeof(int));
+  memcpy(finish+1,save_state+4+n+n+n,n*sizeof(int));
+//  memcpy(lastvisit+1,save_state+3+n+n+n+n,n*sizeof(int));
 }
 
 void save_(int *save_state)
@@ -185,34 +190,53 @@ void save_(int *save_state)
   save_state[0] = turn;
   save_state[1] = nowrun;
   save_state[2] = nowstate;
-  memcpy(save_state+3,flags+1,n*sizeof(int));
-  memcpy(save_state+3+n,now+1,n*sizeof(int));
-  memcpy(save_state+3+n+n,IIndex+1,n*sizeof(int));
-  memcpy(save_state+3+n+n+n,finish+1,n*sizeof(int));
+  save_state[3] = lastvisit;
+  memcpy(save_state+4,flags+1,n*sizeof(int));
+  memcpy(save_state+4+n,now+1,n*sizeof(int));
+  memcpy(save_state+4+n+n,IIndex+1,n*sizeof(int));
+  memcpy(save_state+4+n+n+n,finish+1,n*sizeof(int));
+//  memcpy(save_state+3+n+n+n+n,lastvisit+1,n*sizeof(int));
 }
 
-void dfs(int deep, int thisrun,int thisruntime)
+void dfs(int deep)
 {
 //  printf("%d\n",deep);
+  nowdeep = deep;
   if(deep > deeplimit)return;
   int *save_state = new int[4*n+5];
+  if(nowrun)
+  {
+    if(lastvisit - deep >= m)
+    {
+      save_(save_state);
+
+      runModify(nowrun);
+
+      dfs(deep+1);
+
+      load_(save_state);
+
+      return;
+    }
+  }
+
   for(int i=1;i<=n;++i)
   {
+    if(finish[i])continue;
+
+
     save_(save_state);
-    if(i==thisrun && thisruntime == m)
-    if(!finish[i])
-    {
-      runModify(i);
+    //if(i==thisrun && thisruntime == m)continue;
+
+    runModify(i);
     /*  for(int j=1;j<=n;++j)
       {
         printf("%d ",now[j]);
       }
       printf("\n");*/
-      if(i==thisrun)dfs(deep+1, i,thisruntime+1);
-      else dfs(deep+1, i, 0);
+
       //printf("load?\n");
-      load_(save_state);
-    }
+    load_(save_state);
   }
   //printf("delete?\n");
   delete save_state;
@@ -224,7 +248,7 @@ int main()
   scanf("%d%d%d",&n,&m,&deeplimit);
 
   init();
-  dfs(0,0,0);
+  dfs(0);
 
 /*  for(int i=1;i<=m;++i)
   {
