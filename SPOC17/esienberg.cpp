@@ -14,13 +14,14 @@ using namespace std;
 int turn;
 int flags[1020];
 int now[1020];//当前i进程应该执行第多少条指令
-int n,m;
+int n,m,deeplimit;
 int IIndex[1020];
 int finish[1020];
 int nowrun,nowstate;
 
 void runCheck(int pid,int state)
 {
+//  printf("%d %d\n",pid,state);
   if(state == 1)
   {
     //进入时，需要没有程序在运行
@@ -44,16 +45,18 @@ void runCheck(int pid,int state)
       printf("ERROR\n");
       exit(0);
     }
-    nowstate = 3;
+    nowstate = 2;
   }else if(state == 3)
   {
     if(nowrun!=pid)
     {
+      printf("1: %d %d\n",nowrun,nowstate);
       printf("ERROR\n");
       exit(0);
     }
     if(nowstate!=2)
     {
+      printf("2: %d %d",nowrun,nowstate);
       printf("ERROR\n");
       exit(0);
     }
@@ -61,6 +64,7 @@ void runCheck(int pid,int state)
     nowrun = 0;
   }else
   {
+    printf("%d %d",pid,state);
     printf("ERROR\n");
     exit(0);
   }
@@ -187,25 +191,40 @@ void save_(int *save_state)
   memcpy(save_state+3+n+n+n,finish+1,n*sizeof(int));
 }
 
-void dfs()
+void dfs(int deep, int thisrun,int thisruntime)
 {
-  int *save_state = new int[4*n+3];
+//  printf("%d\n",deep);
+  if(deep > deeplimit)return;
+  int *save_state = new int[4*n+5];
   for(int i=1;i<=n;++i)
   {
     save_(save_state);
-    if(!finish[i])runModify(i);
-    load_(save_state);
+    if(i==thisrun && thisruntime == m)
+    if(!finish[i])
+    {
+      runModify(i);
+    /*  for(int j=1;j<=n;++j)
+      {
+        printf("%d ",now[j]);
+      }
+      printf("\n");*/
+      if(i==thisrun)dfs(deep+1, i,thisruntime+1);
+      else dfs(deep+1, i, 0);
+      //printf("load?\n");
+      load_(save_state);
+    }
   }
+  //printf("delete?\n");
   delete save_state;
 }
 
 int main()
 {
 
-  scanf("%d",&n);
+  scanf("%d%d%d",&n,&m,&deeplimit);
 
   init();
-  dfs();
+  dfs(0,0,0);
 
 /*  for(int i=1;i<=m;++i)
   {
