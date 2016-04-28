@@ -170,6 +170,7 @@ void init()
   turn = 0;
   nowrun = 0;
   nowstate = 0;
+  lastvisit = 0;
 }
 
 void load_(int *save_state)
@@ -201,13 +202,25 @@ void save_(int *save_state)
 void dfs(int deep)
 {
 //  printf("%d\n",deep);
+  int nowfinish = 0;
+  for(int i=1;i<=n;++i)
+  {
+    if(finish[i])++nowfinish;
+  }
+  if(nowfinish)
+  {
+    printf("YES %d\n",nowfinish);
+    return;
+  }
   nowdeep = deep;
   if(deep > deeplimit)return;
   int *save_state = new int[4*n+5];
   if(nowrun)
   {
-    if(lastvisit - deep >= m)
+    if(deep - lastvisit >= m)
     {
+    //  printf("%d %d %d\n",nowrun,deep,lastvisit);
+
       save_(save_state);
 
       runModify(nowrun);
@@ -216,6 +229,7 @@ void dfs(int deep)
 
       load_(save_state);
 
+      delete save_state;
       return;
     }
   }
@@ -227,7 +241,7 @@ void dfs(int deep)
 
     save_(save_state);
     //if(i==thisrun && thisruntime == m)continue;
-
+    //printf("%d ",i);
     runModify(i);
     /*  for(int j=1;j<=n;++j)
       {
@@ -236,6 +250,7 @@ void dfs(int deep)
       printf("\n");*/
 
       //printf("load?\n");
+    dfs(deep+1);
     load_(save_state);
   }
   //printf("delete?\n");
