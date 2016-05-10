@@ -260,7 +260,7 @@ void dfs(int deep)
 int main()
 {
 
-  scanf("%d%d%d",&n,&m,&deeplimit);
+  scanf("%d%d%d",&n,&m,&deeplimit,ttlimit);
 
   init();
   dfs(0);
